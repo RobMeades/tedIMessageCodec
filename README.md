@@ -17,12 +17,14 @@ Power On        InitInd           ->                            Indicates WakeUp
 End of          PollInd           ->                            Indicates "reporting in", at the end of a reporting period.
 Reporting      [SensorsReportInd  ->                            Report from sensors for heartbeat n.]
 Interval  x    [SensorsReportInd  ->                            Report from sensors for heartbeat n + 1.]
+                                 ....
                [SensorsReportInd  ->                            Report from sensors for heartbeat n + m.]
                                  ....
 End of          PollInd           ->                            Indicates "reporting in", at the end of a reporting period.
 Reporting      [SensorsReportInd  ->                            Report from sensors for heartbeat n + m + 1.]
 Interval x + 1 [SensorsReportInd  ->                            Report from sensors for heartbeat n + m + 2.]
-               [SensorsReportInd  ->                            Report from sensors for heartbeat n + m + 3.]
+                                 ....
+               [SensorsReportInd  ->                            Report from sensors for heartbeat n + m + o.]
 ```            
 Note that the above refer to messages and that multiple messages may be packed into a single datagram in order to optimise transmission time/power.
 
