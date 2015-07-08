@@ -36,6 +36,7 @@ extern "C" {
     DLL uint32_t __cdecl encodeHeartbeatSetReqDlMsg (char * pBuffer,
                                                            uint32_t heartbeatSeconds);
     DLL uint32_t __cdecl encodeSensorsReportGetReqDlMsg (char * pBuffer);
+    DLL uint32_t __cdecl encodeTrafficReportGetReqDlMsg (char * pBuffer);
     DLL uint32_t __cdecl decodeUlMsgType (const char * pInBuffer,
                                           uint32_t sizeInBuffer);
     DLL bool __cdecl decodeUlMsgInitInd (const char ** ppInBuffer,
@@ -80,6 +81,18 @@ extern "C" {
                                                   uint32_t *pPowerStateChargeState,
                                                   uint32_t *pPowerStateBatteryMV,
                                                   int32_t *pPowerStateEnergyUAH);
+    DLL bool __cdecl decodeUlMsgTrafficReportGetCnf (const char ** ppInBuffer,
+                                                     uint32_t sizeInBuffer,
+                                                     uint32_t * pNumDatagramsSent,
+                                                     uint32_t * pNumBytesSent,
+                                                     uint32_t * pNumDatagramsReceived,
+                                                     uint32_t * pNumBytesReceived);
+    DLL bool __cdecl decodeUlMsgTrafficReportInd (const char ** ppInBuffer,
+                                                  uint32_t sizeInBuffer,
+                                                  uint32_t * pNumDatagramsSent,
+                                                  uint32_t * pNumBytesSent,
+                                                  uint32_t * pNumDatagramsReceived,
+                                                  uint32_t * pNumBytesReceived);
     DLL bool __cdecl decodeUlMsgDebugInd (const char ** ppInBuffer,
                                           uint32_t sizeInBuffer,
                                           uint32_t * pSizeOfString,

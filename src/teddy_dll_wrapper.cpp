@@ -96,6 +96,12 @@ extern "C" {
         return gMessageCodec.encodeSensorsReportGetReqDlMsg (pBuffer);
     }
 
+    // Wrap encodeTrafficReportGetReqDlMsg 
+    uint32_t __cdecl encodeTrafficReportGetReqDlMsg (char * pBuffer)
+    {
+        return gMessageCodec.encodeTrafficReportGetReqDlMsg (pBuffer);
+    }
+
     // ----------------------------------------------------------------
     // MESSAGE DECODE WRAPPER FUNCTIONS
     // ----------------------------------------------------------------
@@ -325,6 +331,62 @@ extern "C" {
             success = true;
         }
 
+        return success;
+    }
+
+    // Wrap decodeUlMsg for TrafficReportGetCnf 
+    bool __cdecl decodeUlMsgTrafficReportGetCnf (const char ** ppInBuffer,
+                                                 uint32_t sizeInBuffer,
+                                                 uint32_t * pNumDatagramsSent,
+                                                 uint32_t * pNumBytesSent,
+                                                 uint32_t * pNumDatagramsReceived,
+                                                 uint32_t * pNumBytesReceived)
+    {
+	    bool success = false;
+        MessageCodec::DecodeResult_t decodeResult;
+        UlMsgUnion_t outBuffer;
+        
+	    decodeResult = gMessageCodec.decodeUlMsg (ppInBuffer,
+                                                  sizeInBuffer,
+                                                  &outBuffer);
+                                                  
+        if (decodeResult == MessageCodec::DECODE_RESULT_TRAFFIC_REPORT_GET_CNF_UL_MSG)
+        {
+            *pNumDatagramsSent = (uint32_t) outBuffer.trafficReportGetCnfUlMsg.numDatagramsSent;
+            *pNumBytesSent = (uint32_t) outBuffer.trafficReportGetCnfUlMsg.numBytesSent;
+            *pNumDatagramsReceived = (uint32_t) outBuffer.trafficReportGetCnfUlMsg.numDatagramsReceived;
+            *pNumBytesReceived = (uint32_t) outBuffer.trafficReportGetCnfUlMsg.numBytesReceived;
+            success = true;
+        }
+        
+        return success;
+    }
+
+    // Wrap decodeUlMsg for TrafficReportInd 
+    bool __cdecl decodeUlMsgTrafficReportInd (const char ** ppInBuffer,
+                                                 uint32_t sizeInBuffer,
+                                                 uint32_t * pNumDatagramsSent,
+                                                 uint32_t * pNumBytesSent,
+                                                 uint32_t * pNumDatagramsReceived,
+                                                 uint32_t * pNumBytesReceived)
+    {
+	    bool success = false;
+        MessageCodec::DecodeResult_t decodeResult;
+        UlMsgUnion_t outBuffer;
+        
+	    decodeResult = gMessageCodec.decodeUlMsg (ppInBuffer,
+                                                  sizeInBuffer,
+                                                  &outBuffer);
+                                                  
+        if (decodeResult == MessageCodec::DECODE_RESULT_TRAFFIC_REPORT_IND_UL_MSG)
+        {
+            *pNumDatagramsSent = (uint32_t) outBuffer.trafficReportIndUlMsg.numDatagramsSent;
+            *pNumBytesSent = (uint32_t) outBuffer.trafficReportIndUlMsg.numBytesSent;
+            *pNumDatagramsReceived = (uint32_t) outBuffer.trafficReportIndUlMsg.numDatagramsReceived;
+            *pNumBytesReceived = (uint32_t) outBuffer.trafficReportIndUlMsg.numBytesReceived;
+            success = true;
+        }
+        
         return success;
     }
 

@@ -53,9 +53,11 @@ namespace MessageCodec
           DECODE_RESULT_POLL_IND_UL_MSG,
           DECODE_RESULT_SENSORS_REPORT_GET_CNF_UL_MSG,
           DECODE_RESULT_SENSORS_REPORT_IND_UL_MSG,
-          DECODE_RESULT_DEBUG_IND_UL_MSG, // !!! If you add one here update
-                                          // the next line !!!
-          MAX_UL_REQ_MSG = DECODE_RESULT_DEBUG_IND_UL_MSG,
+          DECODE_RESULT_DEBUG_IND_UL_MSG,
+          DECODE_RESULT_TRAFFIC_REPORT_GET_CNF_UL_MSG,
+          DECODE_RESULT_TRAFFIC_REPORT_IND_UL_MSG, // !!! If you add one here update
+                                                   // the next line !!!
+          MAX_UL_REQ_MSG = DECODE_RESULT_TRAFFIC_REPORT_IND_UL_MSG,
           MAX_NUM_DECODE_RESULTS             //!< The maximum number of
                                              //! decode results.
         };
@@ -105,6 +107,11 @@ namespace MessageCodec
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public unsafe delegate UInt32 _encodeSensorsReportGetReqDlMsg(byte* pBuffer);
         public _encodeSensorsReportGetReqDlMsg encodeSensorsReportGetReqDlMsg;
+
+        // uint32_t __cdecl encodeTrafficReportGetReqDlMsg (char * pBuffer);
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public unsafe delegate UInt32 _encodeTrafficReportGetReqDlMsg(byte* pBuffer);
+        public _encodeTrafficReportGetReqDlMsg encodeTrafficReportGetReqDlMsg;
 
         // CsDecodeResult_t __cdecl decodeUlMsgType (const char * pInBuffer,
         //                                           uint32_t sizeInBuffer);
@@ -215,6 +222,35 @@ namespace MessageCodec
                                                                            Int32* pPowerStateEnergyUAH);
         public _decodeUlMsgSensorsReportxxx decodeUlMsgSensorsReportxxx;
 
+        // bool __cdecl decodeUlMsgTrafficReportGetCnf (const char ** ppInBuffer,
+        //                                              uint32_t sizeInBuffer,
+        //                                              uint32_t * pNumDatagramsSent,
+        //                                              uint32_t * pNumBytesSent,
+        //                                              uint32_t * pNumDatagramsReceived,
+        //                                              uint32_t * pNumBytesReceived)
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public unsafe delegate CSDecodeResult _decodeUlMsgTrafficReportGetCnf(byte** ppInBuffer,
+                                                                              UInt32 sizeInBuffer,
+                                                                              UInt32* pNumDatagramsSent,
+                                                                              UInt32* pNumBytesSent,
+                                                                              UInt32* pNumDatagramsReceived,
+                                                                              UInt32* pNumBytesReceived);
+        public _decodeUlMsgTrafficReportGetCnf decodeUlMsgTrafficReportGetCnf;
+
+        // bool __cdecl decodeUlMsgTrafficReportInd (const char ** ppInBuffer,
+        //                                           uint32_t sizeInBuffer,
+        //                                           uint32_t * pNumDatagramsSent,
+        //                                           uint32_t * pNumBytesSent,
+        //                                           uint32_t * pNumDatagramsReceived,
+        //                                           uint32_t * pNumBytesReceived)
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public unsafe delegate CSDecodeResult _decodeUlMsgTrafficReportInd(byte** ppInBuffer,
+                                                                           UInt32 sizeInBuffer,                                                                              UInt32* pNumDatagramsSent,
+                                                                           UInt32* pNumBytesSent,
+                                                                           UInt32* pNumDatagramsReceived,
+                                                                           UInt32* pNumBytesReceived);
+        public _decodeUlMsgTrafficReportInd decodeUlMsgTrafficReportInd;
+
         // Boolean __cdecl decodeUlMsgDebugInd (const char ** ppInBuffer,
         //                                      uint32_t sizeInBuffer
         //                                      uint32_t *pSizeOfString
@@ -259,6 +295,7 @@ namespace MessageCodec
             encodeReportingIntervalSetReqDlMsg = (_encodeReportingIntervalSetReqDlMsg)bindItem(ptrDll, "encodeReportingIntervalSetReqDlMsg", typeof(_encodeReportingIntervalSetReqDlMsg));
             encodeHeartbeatSetReqDlMsg = (_encodeHeartbeatSetReqDlMsg)bindItem(ptrDll, "encodeHeartbeatSetReqDlMsg", typeof(_encodeHeartbeatSetReqDlMsg));
             encodeSensorsReportGetReqDlMsg = (_encodeSensorsReportGetReqDlMsg)bindItem(ptrDll, "encodeSensorsReportGetReqDlMsg", typeof(_encodeSensorsReportGetReqDlMsg));
+            encodeTrafficReportGetReqDlMsg = (_encodeTrafficReportGetReqDlMsg)bindItem(ptrDll, "encodeTrafficReportGetReqDlMsg", typeof(_encodeTrafficReportGetReqDlMsg));
             decodeUlMsgType = (_decodeUlMsgType)bindItem(ptrDll, "decodeUlMsgType", typeof(_decodeUlMsgType));
             decodeUlMsgInitInd = (_decodeUlMsgInitInd)bindItem(ptrDll, "decodeUlMsgInitInd", typeof(_decodeUlMsgInitInd));
             decodeUlMsgIntervalsGetCnf = (_decodeUlMsgIntervalsGetCnf)bindItem(ptrDll, "decodeUlMsgIntervalsGetCnf", typeof(_decodeUlMsgIntervalsGetCnf));
@@ -266,6 +303,8 @@ namespace MessageCodec
             decodeUlMsgHeartbeatSetCnf = (_decodeUlMsgHeartbeatSetCnf)bindItem(ptrDll, "decodeUlMsgHeartbeatSetCnf", typeof(_decodeUlMsgHeartbeatSetCnf));
             decodeUlMsgPollInd = (_decodeUlMsgPollInd)bindItem(ptrDll, "decodeUlMsgPollInd", typeof(_decodeUlMsgPollInd));
             decodeUlMsgSensorsReportxxx = (_decodeUlMsgSensorsReportxxx)bindItem(ptrDll, "decodeUlMsgSensorsReportxxx", typeof(_decodeUlMsgSensorsReportxxx));
+            decodeUlMsgTrafficReportGetCnf = (_decodeUlMsgTrafficReportGetCnf)bindItem(ptrDll, "decodeUlMsgTrafficReportGetCnf", typeof(_decodeUlMsgTrafficReportGetCnf));
+            decodeUlMsgTrafficReportInd = (_decodeUlMsgTrafficReportInd)bindItem(ptrDll, "decodeUlMsgTrafficReportInd", typeof(_decodeUlMsgTrafficReportInd));
             decodeUlMsgDebugInd = (_decodeUlMsgDebugInd)bindItem(ptrDll, "decodeUlMsgDebugInd", typeof(_decodeUlMsgDebugInd));
             initDll = (_initDll)bindItem(ptrDll, "initDll", typeof(_initDll));
             initDll (guiPrintToConsole);

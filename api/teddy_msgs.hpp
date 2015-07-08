@@ -58,7 +58,7 @@
 // TYPES
 // ----------------------------------------------------------------
 
-/// The wake up code sent from the device
+/// The wake up code sent from the device.
 typedef enum WakeUpCodeTag_t
 {
 	WAKE_UP_CODE_OK,                          //!< A good wake-up, no problems.
@@ -82,7 +82,7 @@ typedef enum WakeUpCodeTag_t
 // TYPES FOR SENSOR REPORTING
 // ----------------------------------------------------------------
 
-/// The sensor types
+/// The sensor types.
 typedef enum SensorTypeTag_t
 {
     SENSOR_GPS_POSITION,
@@ -95,7 +95,7 @@ typedef enum SensorTypeTag_t
     MAX_NUM_SENSORS
 } SensorType_t;
 
-/// Structure to hold the GPS Position
+/// Structure to hold the GPS Position.
 typedef struct GpsPositionTag_t
 {
     int32_t latitude;
@@ -104,7 +104,7 @@ typedef struct GpsPositionTag_t
     int32_t speed;
 } GpsPosition_t;
 
-/// Enum to define the possible orientations (most be codeable into four bits)
+/// Enum to define the possible orientations (most be codeable into four bits).
 typedef enum OrientationTag_t
 {
     ORIENTATION_UNCERTAIN = 0x00,
@@ -117,29 +117,29 @@ typedef enum OrientationTag_t
     MAX_NUM_ORIENTATION
 } Orientation_t;
 
-/// Structure to hold the local position
+/// Structure to hold the local position.
 typedef struct LclPositionTag_t
 {
     Orientation_t orientation;
-    uint8_t hugsThisPeriod;   //!< Only values from 0x00 to 0x0F permitted
-    uint8_t slapsThisPeriod;  //!< Only values from 0x00 to 0x0F permitted
-    uint8_t dropsThisPeriod;  //!< Only values from 0x00 to 0x0F permitted
+    uint8_t hugsThisPeriod;   //!< Only values from 0x00 to 0x0F permitted.
+    uint8_t slapsThisPeriod;  //!< Only values from 0x00 to 0x0F permitted.
+    uint8_t dropsThisPeriod;  //!< Only values from 0x00 to 0x0F permitted.
     uint8_t nudgesThisPeriod;
 } LclPosition_t;
 
-/// Sounds level: 0 for none, 0xFFFF for maximum
+/// Sounds level: 0 for none, 0xFFFF for maximum.
 typedef uint16_t SoundLevel_t;
 
-/// Luminosity: 0 for none, 0xFFFF, in lux
+/// Luminosity: 0 for none, 0xFFFF, in lux.
 typedef uint16_t Luminosity_t;
 
-/// Temperature -128 to +127, in Centigrade
+/// Temperature -128 to +127, in Centigrade.
 typedef int8_t Temperature_t;
 
-/// RSSI, values as defined for AT+CSQ
+/// RSSI, values as defined for AT+CSQ.
 typedef uint8_t Rssi_t;
 
-/// Enum to hold the power state (must be codeable into two bits)
+/// Enum to hold the power state (must be codeable into two bits).
 typedef enum ChargeStateTag_t
 {
     CHARGING_UNKNOWN = 0x00,
@@ -149,18 +149,18 @@ typedef enum ChargeStateTag_t
     MAX_NUM_CHARGING
 } ChargeState_t;
 
-/// Structure to hold the power state
+/// Structure to hold the power state.
 typedef struct PowerStateTag_t
 {
     ChargeState_t chargeState;
-    uint16_t batteryMV; //!< battery voltage in mV, max 10,000 mV, will be coded to a resolution of 159 mV (i.e. in 5 bits)
-    int16_t energyUAH;  //!< uAH
+    uint16_t batteryMV; //!< battery voltage in mV, max 10,000 mV, will be coded to a resolution of 159 mV (i.e. in 5 bits).
+    int16_t energyUAH;  //!< uAH consumed since the last power state reading.
 } PowerState_t;
 
-/// The overall sensor readings structure
+/// The overall sensor readings structure.
 typedef struct SensorReadingsTag_t
 {
-    uint32_t  time;              //!< Time in UTC seconds
+    uint32_t  time;              //!< Time in UTC seconds.
     bool gpsPositionPresent;
     GpsPosition_t gpsPosition;
     bool lclPositionPresent;
@@ -177,7 +177,7 @@ typedef struct SensorReadingsTag_t
     PowerState_t powerState;
 } SensorReadings_t;
 
-/// Generic control structure for any sensor
+/// Generic control structure for any sensor.
 typedef struct SensorControlGenericTag_t
 {
     uint32_t readingInterval;         //!< How often, in heartbeats, to take a reading.
@@ -195,13 +195,13 @@ typedef struct SensorControlGenericTag_t
                                       //! the hysteresis or onlyRecordIf triggers.
 } SensorControlGeneric_t;
 
-/// The sensor control structure specifically for GPS
+/// The sensor control structure specifically for GPS.
 typedef struct SensorControlGpsTag_t
 {
     bool gpsLatLongPresent;
-    SensorControlGeneric_t gpsLatLong;       //!< Values are in arc seconds
+    SensorControlGeneric_t gpsLatLong;       //!< Values are in arc seconds.
     bool gpsElevPresent;
-    SensorControlGeneric_t gpsElev;          //!< Values are in metres
+    SensorControlGeneric_t gpsElev;          //!< Values are in metres.
 } SensorControlGps_t;
 
 /// The sensor control structure specifically for LCL
@@ -209,10 +209,10 @@ typedef struct SensorControlLclTag_t
 {
     bool lclStressSensorOnReportImmediately;
     bool lclOrientationReportImmediately;
-    SensorControlGeneric_t lclMovement;      //!< Value applies to any of the three movement directions
+    SensorControlGeneric_t lclMovement;      //!< Value applies to any of the three movement directions.
 } SensorControlLcl_t;
 
-/// The sensor control structure specifically for PowerState
+/// The sensor control structure specifically for PowerState.
 typedef struct SensorControlPowerStateTag_t
 {
     bool powerStateChargeStateReportImmediately;
@@ -220,7 +220,7 @@ typedef struct SensorControlPowerStateTag_t
     SensorControlGeneric_t powerStateBatteryCurrent;
 } SensorControlPowerState_t;
 
-/// The union of all sensor control structures
+/// The union of all sensor control structures.
 typedef union SensorControlUnionTag_t
 {
     SensorControlGps_t gps;
@@ -232,7 +232,7 @@ typedef union SensorControlUnionTag_t
     SensorControlPowerState_t powerState;
 } SensorControlUnion_t;
 
-/// The overall sensors control structure
+/// The overall sensors control structure.
 typedef struct SensorContolTag_t
 {
     SensorType_t sensorType;
@@ -249,7 +249,7 @@ typedef struct SensorContolTag_t
 typedef struct InitIndUlMsgTag_t
 {
     WakeUpCode_t wakeUpCode;      //!< A wake-up code from the teddy.
-    uint16_t     revisionLevel;   //!< Revision level of this messaging protocol
+    uint16_t     revisionLevel;   //!< Revision level of this messaging protocol.
 } InitIndUlMsg_t;
 
 /// RebootReqDlMsg_t. Sent to reboot the teddy and set the development
@@ -326,6 +326,29 @@ typedef struct SensorsReportGetCnfUlMsgTag_t
     SensorReadings_t sensorReadings; //!< All the sensor readings.
 } SensorsReportGetCnfUlMsg_t;
 
+/// TrafficReportIndUlMsg_t.  A report of the traffic data that has occurred
+// since the last InitIndUlMsg_t.
+typedef struct TrafficReportIndUlMsgTag_t
+{
+    uint32_t numDatagramsSent;
+    uint32_t numBytesSent;
+    uint32_t numDatagramsReceived;
+    uint32_t numBytesReceived;
+} TrafficReportIndUlMsg_t;
+
+/// TrafficReportReqDlMsg_t.  Request a traffic report.
+// No structure for this, it's an empty message.
+
+/// TrafficReportGetCnfUlMsg_t.  A report of the traffic data that has occurred
+// since InitIndUlMsg_t, sent in response to a TrafficReportGetReqDlMsg_t.
+typedef struct TrafficReportGetCnfUlMsgTag_t
+{
+    uint32_t numDatagramsSent;
+    uint32_t numBytesSent;
+    uint32_t numDatagramsReceived;
+    uint32_t numBytesReceived;
+} TrafficReportGetCnfUlMsg_t;
+
 /// DebugIndUlMsg_t.  A generic message containing a debug string.
 typedef struct DebugIndUlMsgTag_t
 {
@@ -354,6 +377,8 @@ typedef union UlMsgUnionTag_t
     HeartbeatSetCnfUlMsg_t heartbeatSetCnfUlMsg;
     SensorsReportGetCnfUlMsg_t sensorsReportGetCnfUlMsg;
     SensorsReportIndUlMsg_t sensorsReportIndUlMsg;
+    TrafficReportGetCnfUlMsg_t trafficReportGetCnfUlMsg;
+    TrafficReportIndUlMsg_t trafficReportIndUlMsg;
     DebugIndUlMsg_t debugIndUlMsg;
 } UlMsgUnion_t;
 

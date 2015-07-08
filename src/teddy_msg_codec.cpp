@@ -61,6 +61,7 @@ typedef enum MsgIdDlTag_t
   HEARTBEAT_SET_REQ_DL_MSG,   //!< Set the rate at which sensor
                                      //! readings are taken by the teddy.
   SENSORS_REPORT_GET_REQ_DL_MSG,     //!< Get a report from the teddy.
+  TRAFFIC_REPORT_GET_REQ_DL_MSG,     //!< Get a traffic report from the teddy.
   MAX_NUM_DL_MSGS                    //!< The maximum number of downlink
                                      //! messages.
 } MsgIdDl_t;
@@ -80,6 +81,8 @@ typedef enum MsgIdUlTag_t
   SENSORS_REPORT_GET_CNF_UL_MSG,     //!< Response to a sensor report request.
   SENSORS_REPORT_IND_UL_MSG,         //!< A periodic sensor report.
   DEBUG_IND_UL_MSG,                  //!< A debug string.
+  TRAFFIC_REPORT_GET_CNF_UL_MSG,     //!< Response to a traffic report request.
+  TRAFFIC_REPORT_IND_UL_MSG,         //!< A periodic traffic report.
   MAX_NUM_UL_MSGS                    //!< The maximum number of uplink messages.
 } MsgIdUl_t;
 
@@ -678,6 +681,53 @@ uint32_t MessageCodec::encodeSensorsReportIndUlMsg (char * pBuffer,
     return numBytesEncoded;
 }
 
+uint32_t MessageCodec::encodeTrafficReportGetReqDlMsg (char * pBuffer)
+{
+    uint32_t numBytesEncoded = 0;
+
+    MESSAGE_CODEC_LOGMSG ("Encoding TrafficReportGetReqDlMsg, ID 0x%.2x, ", TRAFFIC_REPOR_GET_REQ_DL_MSG);
+    pBuffer[numBytesEncoded] = TRAFFIC_REPORT_GET_REQ_DL_MSG;
+    numBytesEncoded++;
+    // Empty body
+    MESSAGE_CODEC_LOGMSG ("%d bytes encoded.\n", numBytesEncoded);
+
+    return numBytesEncoded;
+}
+
+uint32_t MessageCodec::encodeTrafficReportGetCnfUlMsg (char * pBuffer,
+                                                       TrafficReportGetCnfUlMsg_t * pMsg)
+{
+    uint32_t numBytesEncoded = 0;
+
+    MESSAGE_CODEC_LOGMSG ("Encoding TrafficReportGetCnfUlMsg, ID 0x%.2x, ", TRAFFIC_REPORT_GET_CNF_UL_MSG);
+    pBuffer[numBytesEncoded] = TRAFFIC_REPORT_GET_CNF_UL_MSG;
+    numBytesEncoded++;
+    numBytesEncoded += encodeUint32 (&(pBuffer[numBytesEncoded]), pMsg->numDatagramsSent);
+    numBytesEncoded += encodeUint32 (&(pBuffer[numBytesEncoded]), pMsg->numBytesSent);
+    numBytesEncoded += encodeUint32 (&(pBuffer[numBytesEncoded]), pMsg->numDatagramsReceived);
+    numBytesEncoded += encodeUint32 (&(pBuffer[numBytesEncoded]), pMsg->numBytesReceived);
+    MESSAGE_CODEC_LOGMSG ("%d bytes encoded.\n", numBytesEncoded);
+
+    return numBytesEncoded;
+}
+
+uint32_t MessageCodec::encodeTrafficReportIndUlMsg (char * pBuffer,
+                                                    TrafficReportIndUlMsg_t * pMsg)
+{
+    uint32_t numBytesEncoded = 0;
+
+    MESSAGE_CODEC_LOGMSG ("Encoding TrafficReportIndUlMsg, ID 0x%.2x, ", TRAFFIC_REPORT_IND_UL_MSG);
+    pBuffer[numBytesEncoded] = TRAFFIC_REPORT_IND_UL_MSG;
+    numBytesEncoded++;
+    numBytesEncoded += encodeUint32 (&(pBuffer[numBytesEncoded]), pMsg->numDatagramsSent);
+    numBytesEncoded += encodeUint32 (&(pBuffer[numBytesEncoded]), pMsg->numBytesSent);
+    numBytesEncoded += encodeUint32 (&(pBuffer[numBytesEncoded]), pMsg->numDatagramsReceived);
+    numBytesEncoded += encodeUint32 (&(pBuffer[numBytesEncoded]), pMsg->numBytesReceived);
+    MESSAGE_CODEC_LOGMSG ("%d bytes encoded.\n", numBytesEncoded);
+
+    return numBytesEncoded;
+}
+
 uint32_t MessageCodec::encodeDebugIndUlMsg (char * pBuffer,
                                             DebugIndUlMsg_t * pMsg)
 {
@@ -759,6 +809,12 @@ MessageCodec::DecodeResult_t MessageCodec::decodeDlMsg (const char ** ppInBuffer
                 case SENSORS_REPORT_GET_REQ_DL_MSG:
                 {
                     decodeResult = DECODE_RESULT_SENSORS_REPORT_GET_REQ_DL_MSG;
+                    // Empty message
+                }
+                break;
+                case TRAFFIC_REPORT_GET_REQ_DL_MSG:
+                {
+                    decodeResult = DECODE_RESULT_TRAFFIC_REPORT_GET_REQ_DL_MSG;
                     // Empty message
                 }
                 break;
@@ -859,6 +915,30 @@ MessageCodec::DecodeResult_t MessageCodec::decodeUlMsg (const char ** ppInBuffer
                         {
                             decodeResult = DECODE_RESULT_BAD_MSG_FORMAT;
                         }
+                    }
+                }
+                break;
+                case TRAFFIC_REPORT_GET_CNF_UL_MSG:
+                {
+                    decodeResult = DECODE_RESULT_TRAFFIC_REPORT_GET_CNF_UL_MSG;
+                    if (pOutBuffer != NULL)
+                    {
+                        pOutBuffer->trafficReportGetCnfUlMsg.numDatagramsSent = decodeUint32 (ppInBuffer);
+                        pOutBuffer->trafficReportGetCnfUlMsg.numBytesSent = decodeUint32 (ppInBuffer);
+                        pOutBuffer->trafficReportGetCnfUlMsg.numDatagramsReceived = decodeUint32 (ppInBuffer);
+                        pOutBuffer->trafficReportGetCnfUlMsg.numBytesReceived = decodeUint32 (ppInBuffer);
+                    }
+                }
+                break;
+                case TRAFFIC_REPORT_IND_UL_MSG:
+                {
+                    decodeResult = DECODE_RESULT_TRAFFIC_REPORT_IND_UL_MSG;
+                    if (pOutBuffer != NULL)
+                    {
+                        pOutBuffer->trafficReportIndUlMsg.numDatagramsSent = decodeUint32 (ppInBuffer);
+                        pOutBuffer->trafficReportIndUlMsg.numBytesSent = decodeUint32 (ppInBuffer);
+                        pOutBuffer->trafficReportIndUlMsg.numDatagramsReceived = decodeUint32 (ppInBuffer);
+                        pOutBuffer->trafficReportIndUlMsg.numBytesReceived = decodeUint32 (ppInBuffer);
                     }
                 }
                 break;

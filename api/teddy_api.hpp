@@ -25,7 +25,10 @@
 // ----------------------------------------------------------------
 
 /// The revision level of this API
-#define REVISION_LEVEL 0
+// 0: baseline revision as of 2015/7/7
+// 1: added TrafficReportGetReq, TrafficReportGetCnf and TrafficReportInd
+//    (to the end so that no message IDs move)
+#define REVISION_LEVEL 1
 
 /// The maximum length of a raw datagram in bytes
 #define MAX_DATAGRAM_SIZE_RAW 122
@@ -137,6 +140,9 @@ public:
 
     /// Encode an uplink message that is sent as a response to a
     // SensorReportGetReqDlMsg.
+    // All accumulated values should be for the period since the
+    // last sensor report only, not lifetime values (as that would
+    // risk overflow).
     // \param pBuffer  A pointer to the buffer to encode into.  The
     // buffer length must be at least MAX_MESSAGE_SIZE long
     // \param pMsg  A pointer to the message to send.
@@ -145,12 +151,43 @@ public:
                                              SensorsReportGetCnfUlMsg_t * pMsg);
 
     /// Encode an uplink message containing the sensor readings.
+    // All accumulated values should be for the period since the
+    // last sensor report only, not lifetime values (as that would
+    // risk overflow).
     // \param pBuffer  A pointer to the buffer to encode into.  The
     // buffer length must be at least MAX_MESSAGE_SIZE long
     // \param pMsg  A pointer to the message to send.
     // \return  The number of bytes encoded.
     uint32_t encodeSensorsReportIndUlMsg (char * pBuffer,
                                           SensorsReportIndUlMsg_t * pMsg);
+
+    /// Encode a downlink message that retrieves a traffic report.
+    // \param pBuffer  A pointer to the buffer to encode into.  The
+    // buffer length must be at least MAX_MESSAGE_SIZE long
+    // \param pMsg  A pointer to the message to send.
+    // \return  The number of bytes encoded.
+    uint32_t encodeTrafficReportGetReqDlMsg (char * pBuffer);
+
+    /// Encode an uplink message that is sent as a response to a
+    // TrafficReportGetReqDlMsg.
+    // Values should be those accumulated since the InitIndUlMsg was
+    // sent.
+    // \param pBuffer  A pointer to the buffer to encode into.  The
+    // buffer length must be at least MAX_MESSAGE_SIZE long
+    // \param pMsg  A pointer to the message to send.
+    // \return  The number of bytes encoded.
+    uint32_t encodeTrafficReportGetCnfUlMsg (char * pBuffer,
+                                             TrafficReportGetCnfUlMsg_t * pMsg);
+
+    /// Encode an uplink message containing a traffic report.
+    // Values should be those accumulated since the InitIndUlMsg was
+    // sent.
+    // \param pBuffer  A pointer to the buffer to encode into.  The
+    // buffer length must be at least MAX_MESSAGE_SIZE long
+    // \param pMsg  A pointer to the message to send.
+    // \return  The number of bytes encoded.
+    uint32_t encodeTrafficReportIndUlMsg (char * pBuffer,
+                                          TrafficReportIndUlMsg_t * pMsg);
 
     // ----------------------------------------------------------------
     // MESSAGE DECODING FUNCTIONS
@@ -178,9 +215,10 @@ public:
       DECODE_RESULT_INTERVALS_GET_REQ_DL_MSG,
       DECODE_RESULT_REPORTING_INTERVAL_SET_REQ_DL_MSG,
       DECODE_RESULT_HEARTBEAT_SET_REQ_DL_MSG,
-      DECODE_RESULT_SENSORS_REPORT_GET_REQ_DL_MSG, // !!! If you add one here
+      DECODE_RESULT_SENSORS_REPORT_GET_REQ_DL_MSG,
+      DECODE_RESULT_TRAFFIC_REPORT_GET_REQ_DL_MSG, // !!! If you add one here
                                                    // update the next line !!!
-      MAX_DL_REQ_MSG = DECODE_RESULT_SENSORS_REPORT_GET_REQ_DL_MSG,
+      MAX_DL_REQ_MSG = DECODE_RESULT_TRAFFIC_REPORT_GET_REQ_DL_MSG,
       DECODE_RESULT_UL_MSG_BASE = 0x80,    //!< From here on are the
                                            //! uplink messages.
       DECODE_RESULT_INIT_IND_UL_MSG = DECODE_RESULT_UL_MSG_BASE,
@@ -190,9 +228,11 @@ public:
       DECODE_RESULT_POLL_IND_UL_MSG,
       DECODE_RESULT_SENSORS_REPORT_GET_CNF_UL_MSG,
       DECODE_RESULT_SENSORS_REPORT_IND_UL_MSG,
-      DECODE_RESULT_DEBUG_IND_UL_MSG,  // !!! If you add one here update
-                                      // the next line !!!
-      MAX_UL_REQ_MSG = DECODE_RESULT_DEBUG_IND_UL_MSG,
+      DECODE_RESULT_DEBUG_IND_UL_MSG,
+      DECODE_RESULT_TRAFFIC_REPORT_GET_CNF_UL_MSG,
+      DECODE_RESULT_TRAFFIC_REPORT_IND_UL_MSG,  // !!! If you add one here update
+                                                // the next line !!!
+      MAX_UL_REQ_MSG = DECODE_RESULT_TRAFFIC_REPORT_IND_UL_MSG,
       MAX_NUM_DECODE_RESULTS             //!< The maximum number of
                                          //! decode results.
     } DecodeResult_t;
