@@ -253,7 +253,7 @@ extern "C" {
                                              bool * pPowerStatePresent,
                                              uint32_t *pPowerStateChargeState,
                                              uint32_t *pPowerStateBatteryMV,
-                                             int32_t *pPowerStateEnergyUAH)
+                                             uint32_t *pPowerStateEnergyUWH)
     {
 	    bool success = false;
         MessageCodec::DecodeResult_t decodeResult;
@@ -325,7 +325,7 @@ extern "C" {
                 *pPowerStatePresent = true;
                 *pPowerStateChargeState = (uint32_t) pSensorReadings->powerState.chargeState;
                 *pPowerStateBatteryMV = (uint32_t) pSensorReadings->powerState.batteryMV;
-                *pPowerStateEnergyUAH = (int32_t) pSensorReadings->powerState.energyUAH;
+                *pPowerStateEnergyUWH = pSensorReadings->powerState.energyUWH;
             }
 
             success = true;

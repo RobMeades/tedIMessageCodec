@@ -21,7 +21,7 @@
 #include <string.h> // for memcpy()
 #include <teddy_api.hpp>
 
-//#define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
 #define MESSAGE_CODEC_LOGMSG(...)    MessageCodec::logMsg(__VA_ARGS__)
@@ -142,6 +142,33 @@ uint32_t MessageCodec::decodeUint32 (const char ** ppBuffer)
     return value;
 }
 
+/// Encode a uint24_t
+uint32_t MessageCodec::encodeUint24 (char * pBuffer, uint32_t value)
+{
+    uint32_t numBytesEncoded = 3;
+
+    pBuffer[0] = 0xff & (value >> 16);
+    pBuffer[1] = 0xff & (value >> 8);
+    pBuffer[2] = 0xff & value;
+
+    return numBytesEncoded;
+}
+
+/// Decode a uint24_t
+uint32_t MessageCodec::decodeUint24 (const char ** ppBuffer)
+{
+    uint32_t value = 0;
+
+    value += ((**ppBuffer) & 0xFF) << 16;
+    (*ppBuffer)++;
+    value += ((**ppBuffer) & 0xFF) << 8;
+    (*ppBuffer)++;
+    value += ((**ppBuffer) & 0xFF);
+    (*ppBuffer)++;
+
+    return value;
+}
+
 /// Encode a uint16_t
 uint32_t MessageCodec::encodeUint16 (char * pBuffer, uint16_t value)
 {
@@ -199,11 +226,9 @@ uint32_t MessageCodec::decodeUint16 (const char ** ppBuffer)
 // 3: Luminosity,        2 bytes: 0 nothing, 65535 maximum
 // 4: Temperature,       1 byte:  -128 to +127 C
 // 5: RSSI,              1 byte:  as defined for AT+CSQ
-// 6: Power state,       3 bytes: bits 0-5: battery voltage, 0 == 0 volts, 63 = 10 volts
+// 6: Power state,       4 bytes: bits 0-5: battery voltage, 0 == 0 volts, 63 = 10 volts
 //                                bits 6-7: charger state
-//                                bits 8-23: energy in uAH (16 bits, signed)
-// 7: Smoke/fire sensor, 2 bytes: 0 nothing, 65535 maximum
-// 8: Alcohol sensor,    2 bytes: 0 nothing, 65535 maximum
+//                                bits 8-31: energy in uWh (24 bits, unsigned)
 
 uint32_t MessageCodec::encodeSensorReadings (char * pBuffer, SensorReadings_t * pSensorReadings)
 {
@@ -340,6 +365,7 @@ uint32_t MessageCodec::encodeSensorReadings (char * pBuffer, SensorReadings_t * 
     if (pSensorReadings->powerStatePresent)
     {
         uint8_t x = 0;
+        uint32_t energyUWH;
 
         if (pSensorReadings->powerState.batteryMV > MAX_BATTERY_VOLTAGE_MV)
         {
@@ -349,7 +375,12 @@ uint32_t MessageCodec::encodeSensorReadings (char * pBuffer, SensorReadings_t * 
         x |= ((pSensorReadings->powerState.chargeState << 6) & 0xC0);
         *pBuffer = x;
         pBuffer++;
-        pBuffer += encodeUint16 (pBuffer, pSensorReadings->powerState.energyUAH);
+        energyUWH = pSensorReadings->powerState.energyUWH;
+        if (energyUWH > MAX_ENERGY_UWH)
+        {
+            energyUWH = MAX_ENERGY_UWH;
+        }
+        pBuffer += encodeUint24 (pBuffer, energyUWH);
     }
 
     // This is as many as we currently have.  If we have more it goes
@@ -474,7 +505,7 @@ bool MessageCodec::decodeSensorReadings (const char ** ppBuffer, SensorReadings_
 
             pSensorReadings->powerState.batteryMV = (uint32_t) ((uint32_t) x & 0x3F) * 10000 / 0x3F;
             pSensorReadings->powerState.chargeState = (ChargeState_t) ((x & 0xC0) >> 6);
-            pSensorReadings->powerState.energyUAH = (int16_t) decodeUint16 (ppBuffer);
+            pSensorReadings->powerState.energyUWH = decodeUint24 (ppBuffer);
         }
 
         // That's all we have but if we have more it would go as follows
@@ -685,7 +716,7 @@ uint32_t MessageCodec::encodeTrafficReportGetReqDlMsg (char * pBuffer)
 {
     uint32_t numBytesEncoded = 0;
 
-    MESSAGE_CODEC_LOGMSG ("Encoding TrafficReportGetReqDlMsg, ID 0x%.2x, ", TRAFFIC_REPOR_GET_REQ_DL_MSG);
+    MESSAGE_CODEC_LOGMSG ("Encoding TrafficReportGetReqDlMsg, ID 0x%.2x, ", TRAFFIC_REPORT_GET_REQ_DL_MSG);
     pBuffer[numBytesEncoded] = TRAFFIC_REPORT_GET_REQ_DL_MSG;
     numBytesEncoded++;
     // Empty body

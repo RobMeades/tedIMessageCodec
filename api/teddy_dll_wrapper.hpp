@@ -80,7 +80,7 @@ extern "C" {
                                                   bool * pPowerStatePresent,
                                                   uint32_t *pPowerStateChargeState,
                                                   uint32_t *pPowerStateBatteryMV,
-                                                  int32_t *pPowerStateEnergyUAH);
+                                                  uint32_t *pPowerStateEnergyUWH);
     DLL bool __cdecl decodeUlMsgTrafficReportGetCnf (const char ** ppInBuffer,
                                                      uint32_t sizeInBuffer,
                                                      uint32_t * pNumDatagramsSent,

@@ -192,7 +192,7 @@ namespace MessageCodec
         //                                           bool * pPowerStatePresent,
         //                                           uint32_t *pPowerStateChargeState,
         //                                           uint32_t *pPowerStateBatteryMV,
-        //                                           int32_t *pPowerStateEnergyUAH)
+        //                                           uint32_t *pPowerStateEnergyUWH)
         [UnmanagedFunctionPointer (CallingConvention.Cdecl)]
         public unsafe delegate CSDecodeResult _decodeUlMsgSensorsReportxxx(byte** ppInBuffer,
                                                                            UInt32 sizeInBuffer,
@@ -219,7 +219,7 @@ namespace MessageCodec
                                                                            Boolean * pPowerStatePresent,
                                                                            UInt32 *pPowerStateChargeState,
                                                                            UInt32 * pPowerStateBatteryMV,
-                                                                           Int32* pPowerStateEnergyUAH);
+                                                                           UInt32* pPowerStateEnergyUWH);
         public _decodeUlMsgSensorsReportxxx decodeUlMsgSensorsReportxxx;
 
         // bool __cdecl decodeUlMsgTrafficReportGetCnf (const char ** ppInBuffer,

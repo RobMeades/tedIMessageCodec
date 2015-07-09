@@ -25,10 +25,16 @@
 // ----------------------------------------------------------------
 
 /// The revision level of this API
-// 0: baseline revision as of 2015/7/7
-// 1: added TrafficReportGetReq, TrafficReportGetCnf and TrafficReportInd
-//    (to the end so that no message IDs move)
-#define REVISION_LEVEL 1
+// 0: Baseline revision as of 2015/7/7.
+// 1: Aded TrafficReportGetReq, TrafficReportGetCnf and TrafficReportInd
+//    (to the end so that no message IDs move).
+// 2: Changed energyUAH in PowerState_t to be energyUWH and it is now
+//    a uint32_t instead of an int16_t (though inside the message codec
+//    it is only carried as an uint24_t).  To align with this the #defines
+//    for MAX_ENERGY_UAH and MIN_ENERGY_UAH have been replaced with a
+//    single MAX_ENERGY_UWH.  The maximum length of a message has also
+//    increased from 30 to 35 bytes as the SensorReadings struct has growd.
+#define REVISION_LEVEL 2
 
 /// The maximum length of a raw datagram in bytes
 #define MAX_DATAGRAM_SIZE_RAW 122
@@ -312,6 +318,16 @@ private:
     // On completion this points to the location after the
     // uint32_t in the input buffer.
     uint32_t decodeUint32 (const char ** ppBuffer);
+    /// Encode a uint24_t value.
+    // \param pBuffer  A pointer to the value to decode.
+    // \param value The value.
+    // \return  The number of bytes encoded.
+    uint32_t encodeUint24 (char * pBuffer, uint32_t value);
+    /// Decode a uint24_t value.
+    // \param ppBuffer  A pointer to the pointer to decode.
+    // On completion this points to the location after the
+    // uint24_t in the input buffer.
+    uint32_t decodeUint24 (const char ** ppBuffer);
     /// Encode a uint16_t value.
     // \param pBuffer  A pointer to the value to decode.
     // \param value The value.

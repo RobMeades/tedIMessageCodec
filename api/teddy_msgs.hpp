@@ -27,7 +27,7 @@
 // ----------------------------------------------------------------
 
 /// The maximum length of a messages in bytes
-#define MAX_MESSAGE_SIZE 30
+#define MAX_MESSAGE_SIZE 35
 
 /// The minimum length of a messages in bytes
 #define MIN_MESSAGE_SIZE 1
@@ -44,8 +44,7 @@
 
 /// Other limits
 #define MAX_BATTERY_VOLTAGE_MV 10000
-#define MAX_ENERGY_UAH 0x7FFF
-#define MIN_ENERGY_UAH 0xFFFF
+#define MAX_ENERGY_UWH 0xFFFFFF
 #define MAX_HUGS_THIS_PERIOD 0x0F
 #define MAX_SLAPS_THIS_PERIOD 0x0F
 #define MAX_DROPS_THIS_PERIOD 0x0F
@@ -154,7 +153,7 @@ typedef struct PowerStateTag_t
 {
     ChargeState_t chargeState;
     uint16_t batteryMV; //!< battery voltage in mV, max 10,000 mV, will be coded to a resolution of 159 mV (i.e. in 5 bits).
-    int16_t energyUAH;  //!< uAH consumed since the last power state reading.
+    uint32_t energyUWH;  //!< uWh consumed since the last power state reading, maximum value 0xFFFFFF (24 bits).
 } PowerState_t;
 
 /// The overall sensor readings structure.
