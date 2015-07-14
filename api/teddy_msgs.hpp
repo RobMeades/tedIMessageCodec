@@ -97,10 +97,10 @@ typedef enum SensorTypeTag_t
 /// Structure to hold the GPS Position.
 typedef struct GpsPositionTag_t
 {
-    int32_t latitude;
-    int32_t longitude;
-    int32_t elevation;
-    int32_t speed;
+    int32_t latitude;  //!< In thousandths of a minute of arc (so divide by 60,000 to get degrees)
+    int32_t longitude; //!< In thousandths of a minute of arc (so divide by 60,000 to get degrees)
+    int32_t elevation; //!< In metres
+    int32_t speed;     //!< In km/h
 } GpsPosition_t;
 
 /// Enum to define the possible orientations (most be codeable into four bits).

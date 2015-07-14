@@ -1011,7 +1011,7 @@ void MessageCodec::logMsg (const char * pFormat, ...)
     va_start (args, pFormat);
     vsnprintf (buffer, sizeof (buffer), pFormat, args);
     va_end (args);
-#ifdef WIN32
+#ifdef WIN32x  // Leave this out as I can't figure out to stop the C# app from garbage-collecting the pointer
     if (MessageCodec::mp_guiPrintToConsole)
     {
         (*MessageCodec::mp_guiPrintToConsole) (buffer);
@@ -1026,8 +1026,14 @@ void  MessageCodec::initDll (void (*guiPrintToConsole) (const char *))
 {
 #ifdef WIN32
     mp_guiPrintToConsole = guiPrintToConsole; 
+    // Comment the generic call out and put in a specific call, see reason in
+    // logMsg() function above
+    // logMsg ("MessageCodec::ready.\n");
     // This is the signal to the GUI that we're done with initialisation
-    logMsg ("MessageCodec::ready.\n");
+    if (MessageCodec::mp_guiPrintToConsole)
+    {
+        (*MessageCodec::mp_guiPrintToConsole) ("MessageCodec::ready.\n");
+    }
 #endif
 }
 
